@@ -17,6 +17,5 @@ class NewsController extends Controller
     {
         $serviceFactory = new ServiceFactory(new Client());
         return $this->json($serviceFactory->get($service));
-        return $this->json($service);
     }
 }

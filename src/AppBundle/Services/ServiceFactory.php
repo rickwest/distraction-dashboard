@@ -11,6 +11,10 @@ class ServiceFactory
     /** @var Client $client */
     protected $client;
 
+    protected $enabledServices = [
+        'reddit', 'hackernews'
+    ];
+
     public function __construct(Client $client)
     {
         $this->client = $client;
@@ -18,9 +22,16 @@ class ServiceFactory
     
     public function get($service, $limit = 10)
     {
-        if (method_exists($this, $service)) {
+        if (method_exists($this, $service) && $this->isServiceEnabled($service)) {
             return $this->sortResponseByTimestamp($this->{$service}($limit));
         }
+
+        return 'service not enabled';
+    }
+
+    protected function isServiceEnabled($service)
+    {
+        return in_array($service, $this->enabledServices);
     }
 
     protected function sortResponseByTimestamp($data)
