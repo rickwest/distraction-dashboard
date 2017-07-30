@@ -5,19 +5,25 @@ namespace AppBundle\Services;
 use AppBundle\Services\Transformers\HackernewsTransformer;
 use AppBundle\Services\Transformers\RedditTransformer;
 use GuzzleHttp\Client;
+use Psr\SimpleCache\CacheInterface;
 
 class ServiceFactory
 {
     /** @var Client $client */
     protected $client;
+    /** @var  CacheInterface $cache */
+    protected $cache;
 
     protected $enabledServices = [
         'reddit', 'hackernews'
     ];
 
-    public function __construct(Client $client)
-    {
+    public function __construct(
+        Client $client,
+        CacheInterface $cache
+    ) {
         $this->client = $client;
+        $this->cache = $cache;
     }
     
     public function get($service, $limit = 10)
@@ -45,13 +51,17 @@ class ServiceFactory
 
     protected function hackernews()
     {
-        $data = (new HackerNews($this->client))->get();
-        return (new HackernewsTransformer($data))->create();
+        if (!$this->cache->has('hackernews')) {
+            $this->cache->set('hackernews', (new HackerNews($this->client))->get());
+        }
+        return (new HackernewsTransformer($this->cache->get('hackernews')))->create();
     }
 
     protected function reddit()
     {
-        $data = (new Reddit($this->client))->get();
-        return (new RedditTransformer($data))->create();
+        if (!$this->cache->has('reddit')) {
+            $this->cache->set('reddit', (new Reddit($this->client))->get());
+        }
+        return (new RedditTransformer($this->cache->get('reddit')))->create();
     }
 }
