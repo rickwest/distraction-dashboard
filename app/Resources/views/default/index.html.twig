@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <!-- Main Content -->
     <div class="container">
         <div class="row">
             <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1">
@@ -10,7 +9,7 @@
                     <span class="sr-only">Loading...</span>
                 </div>
                 <div class="post-preview" v-for="post in posts" v-else>
-                    <a :href="post.link">
+                    <a :href="post.link" target="_blank">
                         <h2 class="post-title">
                             ${ post.title }
                         </h2>
@@ -18,7 +17,7 @@
                             ${ post.service }
                         </h3>
                     </a>
-                    <p class="post-meta">Posted on ${ post.timestamp }</p>
+                    <p class="post-meta">Posted ${ post.timestamp }</p>
                     <hr>
                 </div>
             </div>

@@ -1,13 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rick
- * Date: 29/07/2017
- * Time: 23:03
- */
 
 namespace AppBundle\Services\Transformers;
 
+use Carbon\Carbon;
 
 abstract class TransformerAbstract
 {
@@ -20,10 +15,15 @@ abstract class TransformerAbstract
 
     public function create()
     {
-        return array_map(function($item){
+        return array_map(function($item) {
             return $this->transform($item);
         }, $this->data);
     }
 
+    public function getHumanReadableDifference($timestamp) {
+        return Carbon::createFromTimestamp($timestamp)->diffForHumans();
+    }
+
     abstract public function transform($item);
+
 }

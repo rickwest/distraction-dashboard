@@ -1,4 +1,4 @@
-var app = new Vue({
+const app = new Vue({
     el: '#app',
     delimiters: ['${', '}'],
     data: {
@@ -9,8 +9,8 @@ var app = new Vue({
         load(service) {
             this.loading = true;
             axios.get('api/news/' + service).then((response) => {
-                this.posts = response.data
-                this.loading = false
+                this.posts = response.data;
+                this.loading = false;
             });
         }
     },

@@ -9,7 +9,7 @@ class RedditTransformer extends TransformerAbstract
         return [
             'title' => $data['data']['title'],
             'link' => 'https://reddit.com' . $data['data']['permalink'],
-            'timestamp' => $data['data']['created'],
+            'timestamp' => $this->getHumanReadableDifference($data['data']['created_utc']),
             'service' => 'Reddit',
         ];
     }

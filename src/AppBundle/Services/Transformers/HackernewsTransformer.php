@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rick
- * Date: 29/07/2017
- * Time: 22:59
- */
 
 namespace AppBundle\Services\Transformers;
-
 
 class HackernewsTransformer extends TransformerAbstract
 {
@@ -16,7 +9,7 @@ class HackernewsTransformer extends TransformerAbstract
         return [
             'title' => $data['title'],
             'link' => isset($data['url']) ? $data['url'] : 'https://news.ycombinator.com/item?id=' . $data['id'],
-            'timestamp' => $data['time'],
+            'timestamp' => $this->getHumanReadableDifference($data['time']),
             'service' => 'Hacker News',
         ];
     }

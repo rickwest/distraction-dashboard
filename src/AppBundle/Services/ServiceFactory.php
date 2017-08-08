@@ -9,6 +9,9 @@ use Psr\SimpleCache\CacheInterface;
 
 class ServiceFactory
 {
+    const SERVICE_HACKER_NEWS = 'hackernews';
+    const SERVICE_REDDIT = 'reddit';
+
     /** @var Client $client */
     protected $client;
     /** @var  CacheInterface $cache */
@@ -18,18 +21,16 @@ class ServiceFactory
         'reddit', 'hackernews'
     ];
 
-    public function __construct(
-        Client $client,
-        CacheInterface $cache
-    ) {
-        $this->client = $client;
+    public function __construct(CacheInterface $cache) {
+        $this->client = new Client();
         $this->cache = $cache;
     }
-    
+
     public function get($service, $limit = 10)
     {
         if (method_exists($this, $service) && $this->isServiceEnabled($service)) {
-            return $this->sortResponseByTimestamp($this->{$service}($limit));
+            // Not currently sorting by timestamp as we are now formatting date prior
+            return $this->{$service}($limit);
         }
 
         return 'service not enabled';
@@ -48,20 +49,25 @@ class ServiceFactory
         return $data;
     }
 
-
     protected function hackernews()
     {
-        if (!$this->cache->has('hackernews')) {
-            $this->cache->set('hackernews', (new HackerNews($this->client))->get());
+        if (!$this->cache->has(self::SERVICE_HACKER_NEWS)) {
+            $hackernews = new HackerNews($this->client);
+            $this->cache->set(self::SERVICE_HACKER_NEWS, ($hackernews->get()));
         }
-        return (new HackernewsTransformer($this->cache->get('hackernews')))->create();
+
+        $hackernewsTransformer =  new HackernewsTransformer($this->cache->get(self::SERVICE_HACKER_NEWS));
+        return $hackernewsTransformer->create();
     }
 
     protected function reddit()
     {
-        if (!$this->cache->has('reddit')) {
-            $this->cache->set('reddit', (new Reddit($this->client))->get());
+        if (!$this->cache->has(self::SERVICE_REDDIT)) {
+            $reddit = new Reddit($this->client);
+            $this->cache->set(self::SERVICE_REDDIT, $reddit->get());
         }
-        return (new RedditTransformer($this->cache->get('reddit')))->create();
+
+        $redditTransformer = new RedditTransformer($this->cache->get(self::SERVICE_REDDIT));
+        return $redditTransformer->create();
     }
 }
