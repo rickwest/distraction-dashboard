@@ -1,4 +1,4 @@
-distract
+Distraction Dashboard 📚
 ========
 
-A Symfony project created on July 27, 2017, 8:45 pm.
+A service that aggregates the latest articles from Reddit and Hacker News, with extensibility to add more. All your favourite distractions in one place! http://distraction-dashboard.herokuapp.com/
